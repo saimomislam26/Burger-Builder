@@ -1,0 +1,38 @@
+.Navigation{
+    margin-bottom: 20px;
+    flex-direction: row;
+}
+.navb{
+    margin-top:-50px;
+    text-decoration: none;
+}
+.Brand{
+    margin-top: -20px;
+    /* margin-right: 1000px; */
+    /* margin-right: 20px; */
+}
+.NavLink{
+    text-decoration: none;
+    color: black;
+    margin-top: -80px;
+    margin-left:10px;
+}
+.NavLink:hover{
+    text-decoration: none;
+    color:yellow
+}
+
+.active {
+    text-decoration: none;
+    text-shadow: 1px 1px grey;
+    color: wheat;
+}
+
+ .NavLink:visited, .NavLink:focus {
+    text-decoration:none;
+}
+.NavLink:focus {
+    color: black;
+
+}
+
