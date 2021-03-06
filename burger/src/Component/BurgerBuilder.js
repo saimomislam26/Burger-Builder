@@ -4,32 +4,28 @@ import Burger from './Burger/Burger'
 import Control from './Controls/Control'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Summary from './Summary/Summary'
+import { connect } from 'react-redux'
+import { addIngredients, removeIngredients, updatePurchasable } from '../Component/Redux/actionCreator'
 
+const mapStateToProps = state => {
+    return {
+        ingredients: state.ingredients,
+        totalPrice: state.totalPrice,
+        purchasable: state.purchasable
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+        addIngredients: (igtype) => dispatch(addIngredients(igtype)),
+        removeIngredients: (igtype) => dispatch(removeIngredients(igtype)),
+        updatePurchasable: () => dispatch(updatePurchasable())
+    }
+}
 class BurgerBuilder extends Component {
     state = {
-        ingredients: [
-            { type: 'salad', amount: 0, price: 20 },
-            { type: 'cheese', amount: 0, price: 40 },
-            { type: 'meat', amount: 0, price: 80 }
-        ],
-        totalPrice: 80,
         modalOpen: false,
-        purchasable: false
     }
 
-    purchaseOn = ingredient => {
-        let amount = 0
-        for (let item of ingredient) {
-            amount += item.amount
-            if (amount > 0) {
-                this.setState({ purchasable: true })
-            }
-            else {
-                this.setState({ purchasable: false })
-            }
-        }
-
-    }
 
     onCheckoutHandle = () => {
         this.props.history.push('/checkout');
@@ -37,34 +33,14 @@ class BurgerBuilder extends Component {
 
 
     addIngredientHandle = type => {
-        const ingredients = [...this.state.ingredients]
-        let newprice = this.state.totalPrice
-        for (let item of ingredients) {
-            if (item.type === type) {
-                item.amount++
-                newprice = newprice + item.price
-            }
-        }
-
-        this.setState({ ingredients: ingredients, totalPrice: newprice })
-        this.purchaseOn(ingredients)
+        this.props.addIngredients(type)
+        this.props.updatePurchasable()
     }
 
+
     removeIngredientHandle = type => {
-        const ingredients = [...this.state.ingredients]
-        let newprice = this.state.totalPrice
-        for (let item of ingredients) {
-            if (item.amount === 0) {
-
-            }
-            else if (item.type === type) {
-                item.amount--
-                newprice = newprice - item.price
-            }
-        }
-
-        this.setState({ ingredients: ingredients, totalPrice: newprice })
-        this.purchaseOn(ingredients)
+        this.props.removeIngredients(type)
+        updatePurchasable()
     }
     toggleModal = () => {
         this.setState({ modalOpen: !this.state.modalOpen })
@@ -73,21 +49,21 @@ class BurgerBuilder extends Component {
         return (
             <div>
                 <div className="d-flex flex-md-row flex-column">
-                    <Burger ingredients={this.state.ingredients} />
+                    <Burger ingredients={this.props.ingredients} />
                     <Control ingredientadded={this.addIngredientHandle}
                         ingredientRemoved={this.removeIngredientHandle}
-                        price={this.state.totalPrice}
+                        price={this.props.totalPrice}
                         toggleModal={this.toggleModal}
-                        purchasable={this.state.purchasable} />
+                        purchasable={this.props.purchasable} />
                 </div>
                 <Modal isOpen={this.state.modalOpen}>
                     <ModalHeader>Your Order Summary</ModalHeader>
                     <ModalBody>
-                        <Summary ingredients={this.state.ingredients} />
-                        <p>Price:{this.state.totalPrice}</p>
+                        <Summary ingredients={this.props.ingredients} />
+                        <p>Price:{this.props.totalPrice}</p>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="success" onClick={this.onCheckoutHandle} >Checkout</Button>
+                        <Button style={{ backgroundColor: "#D70F64" }} color="success" onClick={this.onCheckoutHandle} >Checkout</Button>
                         <Button color="danger" onClick={this.toggleModal}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
@@ -97,4 +73,4 @@ class BurgerBuilder extends Component {
     }
 }
 
-export default BurgerBuilder;
+export default connect(mapStateToProps, mapDispatchToProps)(BurgerBuilder);
